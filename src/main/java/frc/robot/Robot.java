@@ -69,7 +69,13 @@ public class Robot extends TimedRobot {
   double leftJoystickXDead;
   double rightJoystickXDead; 
 
-  double motorChanger = 1;
+  double motorChangerFL = 1;
+  double motorChangerFR = 1;
+  double motorChangerBR = 1;
+  double motorChangerBL = 1;
+
+  double oppFrontRightAngle;
+
 
   // dimmensions
   final double W = 32.5;
@@ -155,24 +161,24 @@ public class Robot extends TimedRobot {
     double leftJoystickX = mover.getRawAxis(0);
     double rightJoystickX = mover.getRawAxis(4);
 
-    if (leftJoystickY > 0.05) {
+    if (leftJoystickY > 0.75) {
       leftJoystickYDead = leftJoystickY;
-   } else if (leftJoystickY < -0.05) {
+   } else if (leftJoystickY < -0.75) {
       leftJoystickYDead = leftJoystickY;
    } else {
       leftJoystickYDead = 0;
    }
-   if (leftJoystickX > 0.05) {
+   if (leftJoystickX > 0.75) {
       leftJoystickXDead = leftJoystickX;
-   } else if (leftJoystickX < -0.05) {
+   } else if (leftJoystickX < -0.75) {
       leftJoystickXDead = leftJoystickX;
    } else {
       leftJoystickXDead = 0;
    }
-   if (rightJoystickX > 0.05) {
+   if (rightJoystickX > 0.75) {
       rightJoystickXDead = rightJoystickX;
       //rightJoystickXDead = 0;
-   } else if (rightJoystickX <-0.05) {
+   } else if (rightJoystickX <-0.75) {
       rightJoystickXDead = rightJoystickX;
       //rightJoystickXDead = 0;
    } else{
@@ -194,7 +200,16 @@ public class Robot extends TimedRobot {
     double frontRightAngle = Math.atan2 (b, d) / Math.PI*180;
     double frontLeftAngle = Math.atan2 (b, c) / Math.PI*180; 
 
-
+    
+     if (leftJoystickXDead + leftJoystickYDead != 0) {
+      if (frontRightAngle > 0) {
+        oppFrontRightAngle = frontRightAngle - 180;
+      } else if (frontRightAngle < 180) {
+        oppFrontRightAngle = frontRightAngle + 180;
+      } else {
+        oppFrontRightAngle = 180;
+      }
+    } 
 
     double setpointBRA = backRightAngle;
     double setpointBLA = backLeftAngle;
@@ -206,19 +221,51 @@ public class Robot extends TimedRobot {
     double errorFRA = setpointFRA - rightFrontEncoder.getDistance();
     double errorFLA = setpointFLA - leftFrontEncoder.getDistance();
 
-    double P = .04;
+    double P = .02;
     double BRA = P*errorBRA;
     double BLA = P*errorBLA;
     double FRA = P*errorFRA;
     double FLA = P*errorFLA; 
-     if (rightFrontEncoder.getDistance() < frontRightAngle-.005) {
-      rightFrontTurn.set(FRA);
-    } else if (rightFrontEncoder.getDistance() > frontRightAngle+.005) {
-      rightFrontTurn.set(FRA);
-    }  else {
+     if (setpointFRA == oppFrontRightAngle) {
+      motorChangerFR = -motorChangerFR;
+    } else {
+        motorChangerFR = Math.abs(motorChangerFR);
+      } 
+
+    if (leftJoystickXDead + leftJoystickYDead != 0) {
+     if (setpointFRA > (leftFrontEncoder.getDistance()-90)) {
+        if (rightFrontEncoder.getDistance() < frontRightAngle-.005) {
+          rightFrontTurn.set(FRA);
+        } else if (rightFrontEncoder.getDistance() > frontRightAngle+.005) {
+         rightFrontTurn.set(FRA);
+       }  else {
+         rightFrontTurn.set(0);
+        }
+      } else if (setpointFRA < (leftFrontEncoder.getDistance()+90)) {
+        if (rightFrontEncoder.getDistance() < frontRightAngle-.005) {
+         rightFrontTurn.set(FRA);
+       } else if (rightFrontEncoder.getDistance() > frontRightAngle+.005) {
+         rightFrontTurn.set(FRA);
+       }  else {
+         rightFrontTurn.set(0);
+       }
+     } else {
+        if (rightFrontEncoder.getDistance() < oppFrontRightAngle-.005) {
+         rightFrontTurn.set(FRA);
+       } else if (rightFrontEncoder.getDistance() > oppFrontRightAngle+.005) {
+         rightFrontTurn.set(FRA);
+       } else {
+         rightFrontTurn.set(0);
+       }
+     }
+     
+    } else {
       rightFrontTurn.set(0);
     }
-    if (leftFrontEncoder.getDistance() < frontLeftAngle-.005) {
+
+//blake is dum
+
+   /*  if (leftFrontEncoder.getDistance() < frontLeftAngle-.005) {
       leftFrontTurn.set(FLA);
     } else if (leftFrontEncoder.getDistance() > frontLeftAngle+.005) {
       leftFrontTurn.set(FLA);
@@ -238,7 +285,7 @@ public class Robot extends TimedRobot {
       leftBackTurn.set(BLA);
     } else {
       leftBackTurn.set(0);
-    } 
+    } */
     SmartDashboard.putNumber("LeftFrontEncoder", leftFrontEncoder.getDistance());
     SmartDashboard.putNumber("RightFrontAngle", frontRightAngle);
     SmartDashboard.putNumber("RightFrontEncoder", rightFrontEncoder.getDistance());
@@ -248,61 +295,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LeftBackEncoder", leftBackEncoder.getDistance());
     SmartDashboard.putNumber("deadY", leftJoystickYDead);
     SmartDashboard.putNumber("BackRightSpeed", backRightSpeed);
+    SmartDashboard.putNumber("oppostiteFrontRightAngle", oppFrontRightAngle);
 
-    leftBack.set(backLeftSpeed*motorChanger);
-    rightBack.set(-backRightSpeed*motorChanger);
-    leftFront.set(frontLeftSpeed*motorChanger);
-    rightFront.set(-frontRightSpeed*motorChanger);
+   /*  leftBack.set(backLeftSpeed*motorChangerBL*.7);
+    rightBack.set(-backRightSpeed*motorChangerBR*.7);
+    leftFront.set(frontLeftSpeed*motorChangerFL*.7); */
+    rightFront.set(-frontRightSpeed*motorChangerFR*.7);
 
 
-
-    
-    //SmartDashboard.putNumber("frontRightAngle", frontRightAngle*180);
-    //SmartDashboard.putNumber("frontRightSpeed", frontRightSpeed);
-
-    /*
-    // controller axis variables
-    double x = mover.getRawAxis(0); // left joystick, left right
-    double y = mover.getRawAxis(1); // left joystick, up down
-    // double inPlace = mover.getRawAxis(4); // right joystick, left right
-   
-    if (y > 0) {
-     negythingy = -1;
-    } else {
-       negythingy = 1;
-    }
-
-    // drive
-    driveLeft.set(-Math.sqrt((y)*(y)+(x)*(x))/2* negythingy);
-    driveRight.set(Math.sqrt((y)*(y)+(x)*(x))/2* negythingy); 
-
-    // turn;
-      // axis to degrees
-      tanOutput = (Math.atan((-mover.getRawAxis(1))/mover.getRawAxis(0))*(180/Math.PI));
-      /* if (mover.getRawAxis(0)<1) {
-
-      } *//* 
-      SmartDashboard.putNumber("Degrees", tanOutput);
-
-    if (rightFrontEncoder.getDistance() < degreeInput) {
-      rightFrontTurn.set(.5);
-    }  */
-
-   /*  if (mover.getRawButton(1)) {
-      rightFrontTurn.set(.3);
-      SmartDashboard.putNumber("RightFrontEncoder", rightFrontEncoder.getDistance());
-    } else {
-      rightFrontTurn.set(0);
-    }
-    if (mover.getRawButton(2)) {
-      if (rightFrontEncoder.getDistance() < 1.1) {
-        rightFrontTurn.set(.3);
-      } else {
-        rightFrontTurn.set(0);
-      }
-    } else {
-      rightFrontTurn.set(0);
-    } */
   }
 
   /** This function is called once when the robot is disabled. */
