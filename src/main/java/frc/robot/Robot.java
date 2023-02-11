@@ -138,12 +138,12 @@ double armSpeed = 0; //speed and direction of the arm
     }
     //second controller arm overwrite (Right and left triggers)
     if(armCntrl.getRightTriggerAxis()>0 && armHeight<4){
-      armSpeed=armCntrl.getRightTriggerAxis();
+      armSpeed=armCntrl.getRightTriggerAxis()/2;
     }else{
       armSpeed=0;
     }
     if(armCntrl.getLeftTriggerAxis()>0 && armHeight>0){
-      armSpeed=-armCntrl.getLeftTriggerAxis();
+      armSpeed=-armCntrl.getLeftTriggerAxis()/2;
     }
   }
 
