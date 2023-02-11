@@ -144,6 +144,8 @@ double armSpeed = 0; //speed and direction of the arm
     }
     if(armCntrl.getLeftTriggerAxis()>0 && armHeight>0){
       armSpeed=-armCntrl.getLeftTriggerAxis()/2;
+    }else{
+      armSpeed=0;
     }
   }
 
