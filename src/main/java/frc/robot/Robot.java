@@ -55,6 +55,8 @@ double armSpeed = 0; //speed and direction of the arm
    */
   @Override
   public void robotPeriodic() {
+    //putting arm height on dashboard
+    SmartDashboard.putNumber("Arm Position", armHeight);
     //changes arm height if limit switch is pressed
     if (armSpeed > 0 && armDetector.get() == true){
       armHeight ++;
@@ -105,10 +107,34 @@ double armSpeed = 0; //speed and direction of the arm
   public void teleopPeriodic() {
   
     //B brings the arm to rest BOTH CONTROLLERS
-    if ((armCntrl.getBButton() == true || driveCntrl.getBButton() == true) && armHeight > 0){
-      armSpeed = .15;
+    if ((armCntrl.getBButton() == true || driveCntrl.getBButton() == true) && armHeight>0){
+      armSpeed=-.15;
     } else {
-      armSpeed = 0;
+      armSpeed=0;
+    }
+    //A brings the arm to lowest position for scoring and pickup BOTH CONTROLLERS
+    if((armCntrl.getAButton() == true || driveCntrl.getAButton() == true) && armHeight<1){
+      armSpeed=.15;
+    } else if((armCntrl.getAButton() == true || driveCntrl.getAButton() == true) && armHeight>1){
+      armSpeed=-.15;
+    } else{
+      armSpeed=0;
+    }
+    //X brings the arm to mid scoring position ARM ONLY
+    if(armCntrl.getXButton() == true && armHeight<2){
+      armSpeed=.15;
+    }else if(armCntrl.getXButton()==true && armHeight>2){
+      armSpeed=-.15;
+    }else{
+      armSpeed=0;
+    }
+    //Y brings the arm to highest scoring positon ARM ONLY
+    if(armCntrl.getYButton() == true && armHeight<3){
+      armSpeed=.15;
+    }else if(armCntrl.getYButton()==true && armHeight>3){
+      armSpeed=-.15;
+    }else{
+      armSpeed=0;
     }
   }
 
