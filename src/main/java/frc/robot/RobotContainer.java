@@ -74,10 +74,6 @@ public class RobotContainer {
             m_robotDrive));
   }
 
-  public void zeroModules(){
-    m_robotDrive.drive(0, 0, 0, false, false);
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
