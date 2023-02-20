@@ -14,10 +14,11 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.ClawSubsytem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -34,6 +35,7 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ClawSubsytem m_clawControl = new ClawSubsytem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -42,6 +44,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_clawControl.configClawMotor();
     // Configure the button bindings
     configureButtonBindings();
 
@@ -56,6 +59,12 @@ public class RobotContainer {
                  MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
+    
+    m_clawControl.setDefaultCommand(
+        // Defaults to checking if limit switch is triggered and sets encoder to 0 when true.
+        new RunCommand(
+            () -> m_clawControl.isOpen(),
+             m_clawControl));
   }
 
   /**
@@ -68,9 +77,28 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
+    
+    new JoystickButton(m_driverController, Button.kStart.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
+            m_robotDrive));
+
+    // X Button on controller 1, pickup cone or open
+    new JoystickButton(m_driverController, Button.kX.value)
+        .whileTrue(new RunCommand(
+            () -> m_clawControl.cone(),
+            m_clawControl));
+
+    // Y Button on controller 1, pickup cube or open
+    new JoystickButton(m_driverController, Button.kY.value)
+        .whileTrue(new RunCommand(
+            () -> m_clawControl.cube(), 
+            m_clawControl));
+
+    // Select Button on controller 1, lowers max speed of robot.
+    new JoystickButton(m_driverController, Button.kBack.value)
+        .onTrue(new RunCommand(
+            () -> m_robotDrive.toggleTransmission(),
             m_robotDrive));
   }
 
