@@ -295,4 +295,11 @@ public class DriveSubsystem extends SubsystemBase {
     double distanceTraveled = wheelRotations * 2 * Math.PI * Units.inchesToMeters(3.0);
     return distanceTraveled;
   }
+
+  public void toggleTransmission(){
+    m_frontLeft.toggleTransmissionModules();
+    m_frontRight.toggleTransmissionModules();
+    m_rearLeft.toggleTransmissionModules();
+    m_rearRight.toggleTransmissionModules();
+  }
 }

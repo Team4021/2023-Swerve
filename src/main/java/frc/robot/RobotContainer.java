@@ -59,7 +59,9 @@ public class RobotContainer {
                  MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
+    
     m_clawControl.setDefaultCommand(
+        // Defaults to checking if limit switch is triggered and sets encoder to 0 when true.
         new RunCommand(
             () -> m_clawControl.isOpen(),
              m_clawControl));
@@ -75,18 +77,29 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kRightBumper.value)
+    
+    new JoystickButton(m_driverController, Button.kStart.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-    new JoystickButton(m_driverController, Button.kX.value)//cone, cube is Y
+
+    // X Button on controller 1, pickup cone or open
+    new JoystickButton(m_driverController, Button.kX.value)
         .whileTrue(new RunCommand(
             () -> m_clawControl.cone(),
             m_clawControl));
+
+    // Y Button on controller 1, pickup cube or open
     new JoystickButton(m_driverController, Button.kY.value)
         .whileTrue(new RunCommand(
             () -> m_clawControl.cube(), 
             m_clawControl));
+
+    // Select Button on controller 1, lowers max speed of robot.
+    new JoystickButton(m_driverController, Button.kBack.value)
+        .onTrue(new RunCommand(
+            () -> m_robotDrive.toggleTransmission(),
+            m_robotDrive));
   }
 
   /**
