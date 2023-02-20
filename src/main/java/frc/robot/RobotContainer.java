@@ -19,12 +19,14 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ClawSubsytem;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import java.util.List;
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -35,16 +37,20 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ArmSubsystem m_armMovement = new ArmSubsystem();
   private final ClawSubsytem m_clawControl = new ClawSubsytem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
+  // Arm Controller
+  XboxController m_secondaryController = new XboxController(OIConstants.kSecondaryControllerPort);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     m_clawControl.configClawMotor();
+    m_armMovement.configArmMotor();
     // Configure the button bindings
     configureButtonBindings();
 
@@ -65,6 +71,11 @@ public class RobotContainer {
         new RunCommand(
             () -> m_clawControl.isOpen(),
              m_clawControl));
+
+    m_armMovement.setDefaultCommand(
+      new RunCommand(
+      () -> m_armMovement.isRestingPosition(),
+      m_armMovement));
   }
 
   /**
@@ -82,6 +93,29 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+   //B on Driver controller brings arm to rest
+    new JoystickButton(m_driverController, Button.kB.value)
+        .whileTrue(new RunCommand(
+            () -> m_armMovement.setRestingPosition(), 
+            m_armMovement));
+    //A on Secondary controller brings arm to pickup/low score position
+    new JoystickButton(m_secondaryController, Button.kA.value)
+      .whileTrue(new RunCommand(
+        () -> m_armMovement.armPositionOne(), m_armMovement));
+    //B on secondary controller brings arm to mid score position
+    new JoystickButton(m_secondaryController, Button.kB.value)
+      .whileTrue(new RunCommand(
+        () -> m_armMovement.armPositionTwo(), m_armMovement));
+  
+    //X on Secondary controller brings arm to slide pickup position
+    new JoystickButton(m_secondaryController, Button.kX.value)
+      .whileTrue(new RunCommand(
+        () -> m_armMovement.armPositionFour(), m_armMovement));
+  
+    //Y on Secondary controller brings arm to high score position
+    new JoystickButton(m_secondaryController, Button.kY.value)
+    .whileTrue(new RunCommand(
+      () -> m_armMovement.armPositionThree(), m_armMovement));
 
     // X Button on controller 1, pickup cone or open
     new JoystickButton(m_driverController, Button.kX.value)
@@ -101,50 +135,12 @@ public class RobotContainer {
             () -> m_robotDrive.toggleTransmission(),
             m_robotDrive));
   }
+}
+
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
-
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
-  }
-}
