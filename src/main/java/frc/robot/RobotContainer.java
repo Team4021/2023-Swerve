@@ -74,7 +74,7 @@ public class RobotContainer {
 
     m_armMovement.setDefaultCommand(
       new RunCommand(
-      () -> m_armMovement.isRestingPosition(m_secondaryController.getLeftY(), OIConstants.kSecondaryDeadband),
+      () -> m_armMovement.isRestingPosition(m_secondaryController.getLeftTriggerAxis(), m_secondaryController.getRightTriggerAxis(), m_secondaryController.getLeftY(), OIConstants.kSecondaryDeadband),
       m_armMovement));
   }
 

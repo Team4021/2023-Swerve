@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
         m_wristMotor.configFeedbackNotContinuous(false, 10);
     }
     //checks for arm resting limit switch, defaults everything to the override if it is being used
-    public void isRestingPosition (double armOverride, double deadband) {
+    public void isRestingPosition (double lTSecondary, double rTSecondary, double armOverride, double deadband) {
         if (m_armPointZero.get() == true){
             m_armMotor.setSelectedSensorPosition(0);
         }
@@ -41,6 +41,7 @@ public class ArmSubsystem extends SubsystemBase {
             m_wristMotor.setSelectedSensorPosition(0);
         }
         m_armMotor.set(TalonFXControlMode.PercentOutput, MathUtil.applyDeadband(armOverride, deadband));
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, (rTSecondary - lTSecondary));
     }
     //B on controller 1, arm to rest
     public void setRestingPosition(){
