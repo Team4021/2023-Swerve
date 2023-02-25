@@ -69,7 +69,7 @@ public class RobotContainer {
     m_clawControl.setDefaultCommand(
         // Defaults to checking if limit switch is triggered and sets encoder to 0 when true.
         new RunCommand(
-            () -> m_clawControl.isOpen(),
+            () -> m_clawControl.isOpen(m_secondaryController.getRightX(), OIConstants.kSecondaryDeadband),
              m_clawControl));
 
     m_armMovement.setDefaultCommand(

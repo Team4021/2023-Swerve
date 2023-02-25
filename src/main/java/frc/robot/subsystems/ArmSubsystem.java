@@ -53,13 +53,16 @@ public class ArmSubsystem extends SubsystemBase {
     //B on controller 2, arm to mid scoring position
     public void armPositionTwo(){
         m_armMotor.set(TalonFXControlMode.Position, 2);
+        m_wristMotor.set(TalonFXControlMode.Position, 0);
     }
     //X on controller 2, arm to slide pickup position
     public void armPositionFour(){
         m_armMotor.set(TalonFXControlMode.Position, 4);
+        m_wristMotor.set(TalonFXControlMode.Position, 0);
     }
     //Y on controller 2, arm to high scoring position
     public void armPositionThree(){
         m_armMotor.set(TalonFXControlMode.Position, 3);
+        m_wristMotor.set(TalonFXControlMode.Position, 0);
     }
 }

@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -14,10 +16,12 @@ public class ClawSubsytem extends SubsystemBase{
     public void configClawMotor(){
 
     }
-    public void isOpen(){
+    public void isOpen(double rXJoystickInput, double deadband){
         if(m_clawLimitSwitch.get() == true){
             m_clawMotor.setSelectedSensorPosition(0);
         }
+
+        m_clawMotor.set(TalonFXControlMode.PercentOutput, MathUtil.applyDeadband(rXJoystickInput, deadband));
     }
     public void cone(){
         if(m_clawMotor.getSelectedSensorPosition() == 0){
