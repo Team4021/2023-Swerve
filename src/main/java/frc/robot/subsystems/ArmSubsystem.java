@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -31,14 +32,15 @@ public class ArmSubsystem extends SubsystemBase {
         m_wristMotor.setNeutralMode(NeutralMode.Brake);
         m_wristMotor.configFeedbackNotContinuous(false, 10);
     }
-    //checks for arm resting limit switch
-    public void isRestingPosition () {
+    //checks for arm resting limit switch, defaults everything to the override if it is being used
+    public void isRestingPosition (double armOverride, double deadband) {
         if (m_armPointZero.get() == true){
             m_armMotor.setSelectedSensorPosition(0);
         }
         if (m_wristPointZero.get() == true){
             m_wristMotor.setSelectedSensorPosition(0);
         }
+        m_armMotor.set(TalonFXControlMode.PercentOutput, MathUtil.applyDeadband(armOverride, deadband));
     }
     //B on controller 1, arm to rest
     public void setRestingPosition(){
