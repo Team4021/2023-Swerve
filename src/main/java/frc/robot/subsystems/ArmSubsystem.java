@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -27,10 +26,19 @@ public class ArmSubsystem extends SubsystemBase {
         m_armMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         m_armMotor.setNeutralMode(NeutralMode.Brake);
         m_armMotor.configFeedbackNotContinuous(false, 10);
+        m_armMotor.config_kP(0, 0);
+        m_armMotor.config_kI(0, 0);
+        m_armMotor.config_kD(0, 0);
+        m_armMotor.config_kF(0, 0);
+
         m_wristMotor.configFactoryDefault();
         m_wristMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         m_wristMotor.setNeutralMode(NeutralMode.Brake);
         m_wristMotor.configFeedbackNotContinuous(false, 10);
+        m_wristMotor.config_kP(0, 0);
+        m_wristMotor.config_kI(0, 0);
+        m_wristMotor.config_kD(0, 0);
+        m_wristMotor.config_kF(0, 0);
     }
     //checks for arm resting limit switch, defaults everything to the override if it is being used
     public void isRestingPosition (double lTSecondary, double rTSecondary, double armOverride, double deadband) {
@@ -67,5 +75,13 @@ public class ArmSubsystem extends SubsystemBase {
     public void armPositionThree(){
         m_armMotor.set(TalonFXControlMode.Position, 3);
         m_wristMotor.set(TalonFXControlMode.Position, 0);
+    }
+
+    public void wristPositionDownPickup(){
+        m_wristMotor.set(TalonFXControlMode.Position, -2);
+    }
+    
+    public void wristPositionPickup(){
+        m_wristMotor.set(TalonFXControlMode.Position, -1);
     }
 }

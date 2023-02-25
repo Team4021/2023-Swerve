@@ -17,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import frc.robot.Constants.ModuleConstants;
 
 public class MAXSwerveModule {
   private final WPI_TalonFX m_drivingMotor;
@@ -25,7 +24,7 @@ public class MAXSwerveModule {
 
   private String prefix;
 
-  private boolean toggle = false;
+  public boolean toggle = false;
   private double m_chassisAngularOffset = 0.0;
 
   private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
@@ -53,7 +52,7 @@ public class MAXSwerveModule {
     m_turningMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog);
     m_drivingMotor.configFeedbackNotContinuous(false, 10);
     m_turningMotor.configFeedbackNotContinuous(false, 10);
-    m_drivingMotor.setNeutralMode(NeutralMode.Coast);
+    m_drivingMotor.setNeutralMode(NeutralMode.Brake);
     m_turningMotor.setNeutralMode(NeutralMode.Brake);
     m_drivingMotor.config_kP(0, 0.05);
     m_drivingMotor.config_kI(0, 0.000005);
