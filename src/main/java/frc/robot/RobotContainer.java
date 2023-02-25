@@ -87,7 +87,11 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_armMovement.setRestingPosition(), 
             m_armMovement));
-    //A on Secondary controller brings arm to pickup/low score position
+    //A on both controllers brings arm to pickup/low score position
+    new JoystickButton(m_driverController, Button.kA.value)
+    .whileTrue(new RunCommand(
+      () -> m_armMovement.armPositionOne(), m_armMovement));
+
     new JoystickButton(m_secondaryController, Button.kA.value)
       .whileTrue(new RunCommand(
         () -> m_armMovement.armPositionOne(), m_armMovement));
