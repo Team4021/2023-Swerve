@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -14,8 +15,8 @@ import frc.robot.Constants.DriveConstants;
 
 public class ArmSubsystem extends SubsystemBase {
     //arm Limit switch
-    DigitalInput m_armPointZero = new DigitalInput (0);
-    DigitalInput m_wristPointZero = new DigitalInput(1);
+    DigitalInput m_armPointZero = new DigitalInput(7);
+    DigitalInput m_wristPointZero = new DigitalInput(9);
 
     //arm Motor
     WPI_TalonFX m_armMotor = new WPI_TalonFX(DriveConstants.kArmMotorCanId);
@@ -45,11 +46,14 @@ public class ArmSubsystem extends SubsystemBase {
         if (m_armPointZero.get() == true){
             m_armMotor.setSelectedSensorPosition(0);
         }
-        if (m_wristPointZero.get() == true){
-            m_wristMotor.setSelectedSensorPosition(0);
-        }
+        // if (m_wristPointZero.get() == true){
+        //     m_wristMotor.setSelectedSensorPosition(0);
+        // }
         m_armMotor.set(TalonFXControlMode.PercentOutput, MathUtil.applyDeadband(armOverride, deadband));
         m_wristMotor.set(TalonFXControlMode.PercentOutput, (rTSecondary - lTSecondary));
+        SmartDashboard.putBoolean("wristLimit", m_wristPointZero.get());
+        SmartDashboard.putNumber("wristDist", m_wristMotor.getSelectedSensorPosition());
+        SmartDashboard.putBoolean("armLimit", m_armPointZero.get());
     }
     //B on controller 1, arm to rest
     public void setRestingPosition(){

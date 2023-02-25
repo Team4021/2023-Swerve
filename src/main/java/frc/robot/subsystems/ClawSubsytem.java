@@ -8,11 +8,12 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClawSubsytem extends SubsystemBase{
     WPI_TalonFX m_clawMotor = new WPI_TalonFX(DriveConstants.kClawMotorCanID);
-    DigitalInput m_clawLimitSwitch = new DigitalInput(2);
+    DigitalInput m_clawLimitSwitch = new DigitalInput(8);
 
     public void configClawMotor(){
         m_clawMotor.configFactoryDefault();
@@ -30,6 +31,8 @@ public class ClawSubsytem extends SubsystemBase{
         // }
 
         m_clawMotor.set(TalonFXControlMode.PercentOutput, MathUtil.applyDeadband(rXJoystickInput, deadband));
+        SmartDashboard.putNumber("clawEncoder", m_clawMotor.getSelectedSensorPosition());
+        SmartDashboard.putBoolean("clawLimit", m_clawLimitSwitch.get());
     }
     public void cone(){
         if(m_clawMotor.getSelectedSensorPosition() == 0){
