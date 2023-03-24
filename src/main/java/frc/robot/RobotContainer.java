@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armMovement = new ArmSubsystem();
   private final ClawSubsytem m_clawControl = new ClawSubsytem();
 
@@ -44,6 +44,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
+
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -55,7 +56,7 @@ public class RobotContainer {
                 true, true),
             m_robotDrive));
     
-    m_clawControl.setDefaultCommand(
+    m_clawControl.setDefaultCommand( 
         // Defaults to checking if limit switch is triggered and sets encoder to 0 when true.
         new RunCommand(
             () -> m_clawControl.isOpen(m_secondaryController.getRightX(), OIConstants.kSecondaryDeadband),

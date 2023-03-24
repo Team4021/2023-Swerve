@@ -99,11 +99,11 @@ public class MAXSwerveModule {
     if (toggle == false){
       toggle = true;
       m_drivingMotor.configPeakOutputForward(.2);
-      m_drivingMotor.configPeakOutputReverse(.2);
+      m_drivingMotor.configPeakOutputReverse(-.2);
     } else{
       toggle = false;
       m_drivingMotor.configPeakOutputForward(.5);
-      m_drivingMotor.configPeakOutputReverse(.5);
+      m_drivingMotor.configPeakOutputReverse(-.5);
     }
   }
 
@@ -188,10 +188,6 @@ public class MAXSwerveModule {
     m_drivingMotor.set(TalonFXControlMode.Velocity, velocityToRawUnits(optimizedDesiredState.speedMetersPerSecond, 2048.0, 6.67));
     m_turningMotor.set(TalonSRXControlMode.Position, headingToRawUnits(optimizedDesiredState.angle.getDegrees(), 1024.0));
     m_desiredState = desiredState;
-    SmartDashboard.putNumber("meterspersecond", optimizedDesiredState.speedMetersPerSecond);
-    SmartDashboard.putNumber("drivingVelocityRaw", velocityToRawUnits(optimizedDesiredState.speedMetersPerSecond, 2048.0, 6.67));
-    SmartDashboard.putNumber(this.prefix+"turnHeadingRaw", headingToRawUnits(optimizedDesiredState.angle.getDegrees(), 1024.0));
-    SmartDashboard.putNumber(this.prefix+"turningEncoder", m_turningMotor.getSelectedSensorPosition());
   }
 
 

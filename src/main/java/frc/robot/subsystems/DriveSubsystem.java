@@ -85,7 +85,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-  SmartDashboard.putNumber("should give 1", rawUnitsToHeading(headingToRawUnits(1, 1024.0), 1024.0));
 }
 
   /**
@@ -194,13 +193,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[0]);
     m_rearLeft.setDesiredState(swerveModuleStates[3]);
     m_rearRight.setDesiredState(swerveModuleStates[2]);
-    SmartDashboard.putString("FLMS", swerveModuleStates[0].toString());
-    SmartDashboard.putString("FRMS", swerveModuleStates[1].toString());
-    SmartDashboard.putString("BLMS", swerveModuleStates[2].toString());
-    SmartDashboard.putString("BRMS", swerveModuleStates[3].toString());
-    SmartDashboard.putNumber("xSpeedDelivered", xSpeedDelivered);
-    SmartDashboard.putNumber("ySpeedDelivered", ySpeedDelivered);
-    SmartDashboard.putNumber("rotDelivered", rotDelivered);
   }
 
   /**
